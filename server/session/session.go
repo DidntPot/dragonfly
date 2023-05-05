@@ -21,6 +21,7 @@ import (
 	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 	"github.com/sandertv/gophertunnel/minecraft/text"
+	"golang.org/x/exp/slices"
 	"io"
 	"net"
 	"sync"
@@ -36,6 +37,9 @@ type Session struct {
 	c        Controllable
 	conn     Conn
 	handlers map[uint32]packetHandler
+
+	pkBufMu sync.Mutex
+	pkBuf   []packet.Packet
 
 	// onStop is called when the session is stopped. The controllable passed is the controllable that the
 	// session controls.
@@ -214,7 +218,7 @@ func (s *Session) Spawn(c Controllable, pos mgl64.Vec3, w *world.World, gm world
 // Start makes the session start handling incoming packets from the client.
 func (s *Session) Start() {
 	s.c.World().AddEntity(s.c)
-	go s.handlePackets()
+	go s.readPackets()
 }
 
 // Controllable returns the Controllable entity that the Session controls.
@@ -289,9 +293,14 @@ func (s *Session) ClientData() login.ClientData {
 	return s.conn.ClientData()
 }
 
-// handlePackets continuously handles incoming packets from the connection. It processes them accordingly.
-// Once the connection is closed, handlePackets will return.
-func (s *Session) handlePackets() {
+// Tick ...
+func (s *Session) Tick(w *world.World, c int64) {
+	s.handlePackets()
+}
+
+// readPackets continuously reads incoming packets from the connection. It puts them into a buffer.
+// Once the connection is closed, readPackets will return.
+func (s *Session) readPackets() {
 	go s.background()
 
 	defer func() {
@@ -309,6 +318,19 @@ func (s *Session) handlePackets() {
 		if err != nil {
 			return
 		}
+		s.pkBufMu.Lock()
+		s.pkBuf = append(s.pkBuf, pk)
+		s.pkBufMu.Unlock()
+	}
+}
+
+// handlePackets ...
+func (s *Session) handlePackets() {
+	s.pkBufMu.Lock()
+	buf := slices.Clone(s.pkBuf)
+	s.pkBuf = s.pkBuf[:0]
+	s.pkBufMu.Unlock()
+	for _, pk := range buf {
 		if err := s.handlePacket(pk); err != nil {
 			// An error occurred during the handling of a packet. Print the error and stop handling any more
 			// packets.
@@ -473,6 +495,11 @@ func (s *Session) registerHandlers() {
 	}
 }
 
+// RegisterHandler ...
+func (s *Session) RegisterHandler(id uint32, h packetHandler) {
+	s.handlers[id] = h
+}
+
 // handleInterfaceUpdate handles an update to the UI inventory, used for updating enchantment options and possibly more
 // in the future.
 func (s *Session) handleInterfaceUpdate(slot int, _, item item.Stack) {
@@ -491,6 +518,11 @@ func (s *Session) writePacket(pk packet.Packet) {
 		return
 	}
 	_ = s.conn.WritePacket(pk)
+}
+
+// WritePacket ...
+func (s *Session) WritePacket(pk packet.Packet) {
+	s.writePacket(pk)
 }
 
 // initPlayerList initialises the player list of the session and sends the session itself to all other

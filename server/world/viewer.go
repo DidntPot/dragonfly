@@ -11,6 +11,8 @@ import (
 // Viewer is a viewer in the world. It can view changes that are made in the world, such as the addition of
 // entities and the changes of blocks.
 type Viewer interface {
+	// Tick ...
+	Tick(w *World, current int64)
 	// ViewEntity views the entity passed. It is called for every entity that the viewer may encounter in the
 	// world, either by moving entities or by moving the viewer using a world.Loader.
 	ViewEntity(e Entity)
@@ -75,6 +77,7 @@ type NopViewer struct{}
 // Compile time check to make sure NopViewer implements Viewer.
 var _ Viewer = NopViewer{}
 
+func (NopViewer) Tick(w *World, current int64)                               {}
 func (NopViewer) ViewEntity(Entity)                                          {}
 func (NopViewer) HideEntity(Entity)                                          {}
 func (NopViewer) ViewEntityGameMode(Entity)                                  {}

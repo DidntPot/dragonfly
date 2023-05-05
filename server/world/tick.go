@@ -54,8 +54,9 @@ func (t ticker) tick() {
 	rain, thunder, tick, tim := t.w.set.Raining, t.w.set.Thundering && t.w.set.Raining, t.w.set.CurrentTick, int(t.w.set.Time)
 	t.w.set.Unlock()
 
-	if tick%20 == 0 {
-		for _, viewer := range viewers {
+	for _, viewer := range viewers {
+		viewer.Tick(t.w, tick)
+		if tick%20 == 0 {
 			if t.w.conf.Dim.TimeCycle() {
 				viewer.ViewTime(tim)
 			}
