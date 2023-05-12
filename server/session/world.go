@@ -896,14 +896,16 @@ func (s *Session) ViewEntityAction(e world.Entity, a world.EntityAction) {
 // ViewEntityState ...
 func (s *Session) ViewEntityState(e world.Entity) {
 	metadata := s.parseEntityMetadata(e)
-	runtimeID := s.entityRuntimeID(e)
-	s.entityMutex.Lock()
-	if tag, ok := s.entitySpecificTag[runtimeID]; ok {
-		metadata[protocol.EntityDataKeyName] = tag
+	c, ok := e.(Controllable)
+	if ok {
+		s.entityMutex.Lock()
+		if tag, ok := s.playerSpecificTag[c.XUID()]; ok {
+			metadata[protocol.EntityDataKeyName] = tag
+		}
+		s.entityMutex.Unlock()
 	}
-	s.entityMutex.Unlock()
 	s.writePacket(&packet.SetActorData{
-		EntityRuntimeID: runtimeID,
+		EntityRuntimeID: s.entityRuntimeID(e),
 		EntityMetadata:  metadata,
 	})
 }

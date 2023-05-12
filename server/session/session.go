@@ -53,9 +53,9 @@ type Session struct {
 	// currentEntityRuntimeID holds the runtime ID assigned to the last entity. It is incremented for every
 	// entity spawned to the session.
 	currentEntityRuntimeID uint64
-	// entitySpecificTag holds a map of entity runtime IDs to entity specific data. This data is used to
-	// store data that is specific to an entity, such as the entity type of the entity.
-	entitySpecificTag map[uint64]string
+	// playerSpecificTag holds a map of entity runtime IDs to player specific tags. These tags are used to
+	// store data such as the player's name tag.
+	playerSpecificTag map[string]string
 	// entityRuntimeIDs holds a list of all runtime IDs of entities spawned to the session.
 	entityRuntimeIDs map[world.Entity]uint64
 	entities         map[uint64]world.Entity
@@ -225,22 +225,22 @@ func (s *Session) Controllable() Controllable {
 	return s.c
 }
 
-// SetEntitySpecificTag sets the name tag of the entity passed to the name passed. The name tag will be
+// SetPlayerSpecificTag sets the name tag of the entity passed to the name passed. The name tag will be
 // visible to the player passed.
-func (s *Session) SetEntitySpecificTag(e world.Entity, name string) {
-	runtimeID := s.entityRuntimeID(e)
+func (s *Session) SetPlayerSpecificTag(p Controllable, name string) {
 	s.entityMutex.Lock()
-	s.entitySpecificTag[runtimeID] = name
+	s.playerSpecificTag[p.XUID()] = name
 	s.entityMutex.Unlock()
+	s.ViewEntityState(p)
 }
 
-// ResetEntitySpecificTag resets the name tag of the entity passed to the default name tag. The name tag
-// will be visible to the player passed.
-func (s *Session) ResetEntitySpecificTag(e world.Entity) {
-	runtimeID := s.entityRuntimeID(e)
+// ResetPlayerSpecificTag resets the name tag of the entity passed. The name tag will no longer be visible
+// to the player passed.
+func (s *Session) ResetPlayerSpecificTag(p Controllable) {
 	s.entityMutex.Lock()
-	delete(s.entitySpecificTag, runtimeID)
+	delete(s.playerSpecificTag, p.XUID())
 	s.entityMutex.Unlock()
+	s.ViewEntityState(p)
 }
 
 // Close closes the session, which in turn closes the controllable and the connection that the session
