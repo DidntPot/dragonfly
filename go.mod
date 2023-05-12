@@ -1,4 +1,4 @@
-module github.com/df-mc/dragonfly
+module github.com/moyai-network/dragonfly
 
 go 1.18
 
