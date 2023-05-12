@@ -53,6 +53,9 @@ type Session struct {
 	// currentEntityRuntimeID holds the runtime ID assigned to the last entity. It is incremented for every
 	// entity spawned to the session.
 	currentEntityRuntimeID uint64
+	// entitySpecificTag holds a map of entity runtime IDs to entity specific data. This data is used to
+	// store data that is specific to an entity, such as the entity type of the entity.
+	entitySpecificTag map[uint64]string
 	// entityRuntimeIDs holds a list of all runtime IDs of entities spawned to the session.
 	entityRuntimeIDs map[world.Entity]uint64
 	entities         map[uint64]world.Entity
@@ -220,6 +223,24 @@ func (s *Session) Start() {
 // Controllable returns the Controllable entity that the Session controls.
 func (s *Session) Controllable() Controllable {
 	return s.c
+}
+
+// SetEntitySpecificTag sets the name tag of the entity passed to the name passed. The name tag will be
+// visible to the player passed.
+func (s *Session) SetEntitySpecificTag(e world.Entity, name string) {
+	runtimeID := s.entityRuntimeID(e)
+	s.entityMutex.Lock()
+	s.entitySpecificTag[runtimeID] = name
+	s.entityMutex.Unlock()
+}
+
+// ResetEntitySpecificTag resets the name tag of the entity passed to the default name tag. The name tag
+// will be visible to the player passed.
+func (s *Session) ResetEntitySpecificTag(e world.Entity) {
+	runtimeID := s.entityRuntimeID(e)
+	s.entityMutex.Lock()
+	delete(s.entitySpecificTag, runtimeID)
+	s.entityMutex.Unlock()
 }
 
 // Close closes the session, which in turn closes the controllable and the connection that the session
