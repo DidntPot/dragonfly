@@ -250,14 +250,14 @@ func (p *Player) SetSkin(skin skin.Skin) {
 	}
 }
 
-// SetEntitySpecificTags sets the entity-specific tags of the player.
-func (p *Player) SetEntitySpecificTags(e world.Entity, tag string) {
-	p.session().SetEntitySpecificTag(e, tag)
+// SetPlayerSpecificTag sets the entity-specific tags of the player.
+func (p *Player) SetPlayerSpecificTag(pl *Player, tag string) {
+	p.session().SetPlayerSpecificTag(pl, tag)
 }
 
-// ResetEntitySpecificTags resets the entity-specific tags of the player.
-func (p *Player) ResetEntitySpecificTags(e world.Entity) {
-	p.session().ResetEntitySpecificTag(e)
+// ResetPlayerSpecificTag resets the entity-specific tags of the player.
+func (p *Player) ResetPlayerSpecificTag(pl *Player) {
+	p.session().ResetPlayerSpecificTag(pl)
 }
 
 // Locale returns the language and locale of the Player, as selected in the Player's settings.
