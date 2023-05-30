@@ -184,7 +184,7 @@ func flowInto(b world.Liquid, src, pos cube.Pos, w *world.World, falling bool) b
 }
 
 // liquidPath represents a path to an empty lower block or a block that can be flown into by a liquid, which
-// the liquid tends to flow into. All paths with the lowest length will be filled with water.
+// the liquid tends to flow into. Resetable paths with the lowest length will be filled with water.
 type liquidPath []cube.Pos
 
 // calculateLiquidPaths calculates paths in the world that the liquid passed can flow in to reach lower
