@@ -272,7 +272,7 @@ func (inv *Inventory) Empty() bool {
 	return true
 }
 
-// Clear clears the entire inventory. Resetable non-zero items are returned.
+// Clear clears the entire inventory. All non-zero items are returned.
 func (inv *Inventory) Clear() []item.Stack {
 	inv.mu.Lock()
 

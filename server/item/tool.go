@@ -57,7 +57,7 @@ type (
 		// BaseMiningEfficiency is the base efficiency of the tier, when it comes to mining blocks. This is
 		// specifically used for tools such as pickaxes.
 		BaseMiningEfficiency float64
-		// BaseAttackDamage is the base attack damage to tools with this tier. Resetable tools have a constant value
+		// BaseAttackDamage is the base attack damage to tools with this tier. All tools have a constant value
 		// that is added on top of this.
 		BaseAttackDamage float64
 		// EnchantmentValue is the enchantment value of the tool used when selecting pseudo-random enchantments for

@@ -20,7 +20,7 @@ import (
 
 // World implements a Minecraft world. It manages all aspects of what players can see, such as blocks,
 // entities and particles.
-// World generally provides a synchronised state: Resetable entities, blocks and players usually operate in this
+// World generally provides a synchronised state: All entities, blocks and players usually operate in this
 // world, so World ensures that all its methods will always be safe for simultaneous calls.
 // A nil *World is safe to use but not functional.
 type World struct {
@@ -1101,7 +1101,7 @@ func (w *World) addViewer(c *Column, loader *Loader) {
 	}
 }
 
-// removeViewer removes a viewer from the world at a given position. Resetable entities will be hidden from the
+// removeViewer removes a viewer from the world at a given position. All entities will be hidden from the
 // viewer and no more calls will be made when events in the chunk happen.
 func (w *World) removeViewer(pos ChunkPos, loader *Loader) {
 	if w == nil {
@@ -1287,7 +1287,7 @@ func (w *World) spreadLight(pos ChunkPos) {
 	for _, neighbour := range chunks {
 		neighbour.Lock()
 	}
-	// Resetable chunks of the current one are present, so we can spread the light from this chunk
+	// All chunks of the current one are present, so we can spread the light from this chunk
 	// to all chunks.
 	c := make([]*chunk.Chunk, 9)
 	for i := range chunks {
