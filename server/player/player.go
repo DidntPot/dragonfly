@@ -255,6 +255,16 @@ func (p *Player) Locale() language.Tag {
 	return p.locale
 }
 
+// SetPlayerSpecificTag sets the entity-specific tags of the player.
+func (p *Player) SetPlayerSpecificTag(pl *Player, tag string) {
+	p.session().SetPlayerSpecificTag(pl, tag)
+}
+
+// ResetPlayerSpecificTag resets the entity-specific tags of the player.
+func (p *Player) ResetPlayerSpecificTag(pl *Player) {
+	p.session().ResetPlayerSpecificTag(pl)
+}
+
 // Handle changes the current Handler of the player. As a result, events called by the player will call
 // handlers of the Handler passed.
 // Handle sets the player's Handler to NopHandler if nil is passed.
