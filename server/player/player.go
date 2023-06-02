@@ -265,6 +265,16 @@ func (p *Player) Locale() language.Tag {
 	return p.locale
 }
 
+// SetPlayerSpecificTag sets the entity-specific tags of the player.
+func (p *Player) SetPlayerSpecificTag(pl *Player, tag string) {
+	p.session().SetPlayerSpecificTag(pl, tag)
+}
+
+// ResetPlayerSpecificTag resets the entity-specific tags of the player.
+func (p *Player) ResetPlayerSpecificTag(pl *Player) {
+	p.session().ResetPlayerSpecificTag(pl)
+}
+
 // Handle changes the current Handler of the player. As a result, events called by the player will call
 // handlers of the Handler passed.
 // Handle sets the player's Handler to NopHandler if nil is passed.
@@ -2585,23 +2595,41 @@ func (p *Player) ShowParticle(pos mgl64.Vec3, particle world.Particle) {
 	p.session().ViewParticle(pos, particle)
 }
 
+// OpenSign makes the player open the sign at the cube.Pos passed, with the specific side provided. The client will not
+// show the interface if it is not aware of a sign at the position.
+func (p *Player) OpenSign(pos cube.Pos, frontSide bool) {
+	p.session().OpenSign(pos, frontSide)
+}
+
 // EditSign edits the sign at the cube.Pos passed and writes the text passed to a sign at that position. If no sign is
 // present or if the Player cannot edit it, an error is returned
-func (p *Player) EditSign(pos cube.Pos, text string) error {
+func (p *Player) EditSign(pos cube.Pos, frontText, backText string) error {
 	w := p.World()
 	sign, ok := w.Block(pos).(block.Sign)
 	if !ok {
 		return fmt.Errorf("edit sign: no sign at position %v", pos)
 	}
-	if !sign.EditableBy(p) {
-		return fmt.Errorf("edit sign: sign text was already finalized")
+
+	if sign.Waxed {
+		return nil
+	} else if frontText == sign.Front.Text && backText == sign.Back.Text {
+		return nil
 	}
 
 	ctx := event.C()
-	if p.Handler().HandleSignEdit(ctx, sign.Text, text); ctx.Cancelled() {
-		return nil
+	if frontText != sign.Front.Text {
+		if p.Handler().HandleSignEdit(ctx, true, sign.Front.Text, frontText); ctx.Cancelled() {
+			return nil
+		}
+		sign.Front.Text = frontText
+		sign.Front.Owner = p.XUID()
+	} else {
+		if p.Handler().HandleSignEdit(ctx, false, sign.Back.Text, backText); ctx.Cancelled() {
+			return nil
+		}
+		sign.Back.Text = backText
+		sign.Back.Owner = p.XUID()
 	}
-	sign.Text = text
 	w.SetBlock(pos, sign, nil)
 	return nil
 }
