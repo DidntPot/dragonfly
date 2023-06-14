@@ -33,7 +33,7 @@ func (s *Session) ViewSubChunks(center world.SubChunkPos, offsets []protocol.Sub
 	transaction := make(map[uint64]struct{})
 	for _, offset := range offsets {
 		ind := int16(center.Y()) + int16(offset[1]) - int16(r[0])>>4
-		if ind < 0 || ind >= int16(r.Height()>>4) {
+		if ind < 0 || ind > int16(r.Height()>>4) {
 			entries = append(entries, protocol.SubChunkEntry{Result: protocol.SubChunkResultIndexOutOfBounds, Offset: offset})
 			continue
 		}
@@ -131,10 +131,16 @@ func (s *Session) sendBlobHashes(pos world.ChunkPos, c *chunk.Chunk, blockEntiti
 	if subChunkRequests {
 		biomes := chunk.EncodeBiomes(c, chunk.NetworkEncoding)
 		if hash := xxhash.Sum64(biomes); s.trackBlob(hash, biomes) {
+			highest := uint16(0)
+			for highest = uint16(len(c.Sub()) - 1); highest > 0; highest-- {
+				if !c.Sub()[highest].Empty() {
+					break
+				}
+			}
 			s.writePacket(&packet.LevelChunk{
 				SubChunkCount:   protocol.SubChunkRequestModeLimited,
 				Position:        protocol.ChunkPos(pos),
-				HighestSubChunk: uint16(len(c.Sub())), // This is always going to be the highest sub-chunk, anyway.
+				HighestSubChunk: highest, // This is always going to be the highest sub-chunk, anyway.
 				BlobHashes:      []uint64{hash},
 				RawPayload:      []byte{0},
 				CacheEnabled:    true,
