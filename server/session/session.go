@@ -473,6 +473,11 @@ func (s *Session) registerHandlers() {
 	}
 }
 
+// RegisterHandler ...
+func (s *Session) RegisterHandler(id uint32, h packetHandler) {
+	s.handlers[id] = h
+}
+
 // handleInterfaceUpdate handles an update to the UI inventory, used for updating enchantment options and possibly more
 // in the future.
 func (s *Session) handleInterfaceUpdate(slot int, _, item item.Stack) {
@@ -491,6 +496,11 @@ func (s *Session) writePacket(pk packet.Packet) {
 		return
 	}
 	_ = s.conn.WritePacket(pk)
+}
+
+// WritePacket ...
+func (s *Session) WritePacket(pk packet.Packet) {
+	s.writePacket(pk)
 }
 
 // initPlayerList initialises the player list of the session and sends the session itself to all other
