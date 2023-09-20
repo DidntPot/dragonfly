@@ -22,7 +22,7 @@ func (e EndCrystal) Hash() uint64 {
 
 // Model ...
 func (e EndCrystal) Model() world.BlockModel {
-	return &model{}
+	return &endCrystalModel{}
 }
 
 // EncodeItem ...
@@ -56,14 +56,14 @@ func (e EndCrystal) UseOnBlock(pos cube.Pos, face cube.Face, _ mgl64.Vec3, w *wo
 	return placed(ctx)
 }
 
-type model struct{}
+type endCrystalModel struct{}
 
 // BBox ...
-func (m *model) BBox(pos cube.Pos, w *world.World) []cube.BBox {
+func (m *endCrystalModel) BBox(pos cube.Pos, w *world.World) []cube.BBox {
 	return nil
 }
 
 // FaceSolid ...
-func (m *model) FaceSolid(pos cube.Pos, face cube.Face, w *world.World) bool {
+func (m *endCrystalModel) FaceSolid(pos cube.Pos, face cube.Face, w *world.World) bool {
 	return false
 }
