@@ -101,6 +101,7 @@ func init() {
 	world.RegisterBlock(TNT{})
 	world.RegisterBlock(Terracotta{})
 	world.RegisterBlock(Tuff{})
+	world.RegisterBlock(EndCrystal{})
 
 	for _, ore := range OreTypes() {
 		world.RegisterBlock(CoalOre{Type: ore})
@@ -220,6 +221,7 @@ func init() {
 	world.RegisterItem(ChiseledQuartz{})
 	world.RegisterItem(Clay{})
 	world.RegisterItem(Coal{})
+	world.RegisterItem(EndCrystal{})
 	world.RegisterItem(Cobblestone{Mossy: true})
 	world.RegisterItem(Cobblestone{})
 	world.RegisterItem(CocoaBean{})
