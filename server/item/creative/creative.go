@@ -2,6 +2,7 @@ package creative
 
 import (
 	_ "embed"
+	"github.com/df-mc/dragonfly/server/block"
 	"github.com/df-mc/dragonfly/server/internal/nbtconv"
 	// The following three imports are essential for this package: They make sure this package is loaded after
 	// all these imports. This ensures that all items are registered before the creative items are registered
@@ -97,4 +98,5 @@ func init() {
 		}
 		RegisterItem(st)
 	}
+	RegisterItem(item.NewStack(block.EndCrystal{}, 1))
 }
