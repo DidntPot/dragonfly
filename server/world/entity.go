@@ -111,6 +111,7 @@ type EntityRegistryConfig struct {
 	Snowball           func(pos, vel mgl64.Vec3, owner Entity) Entity
 	SplashPotion       func(pos, vel mgl64.Vec3, t any, owner Entity) Entity
 	Lightning          func(pos mgl64.Vec3) Entity
+	EndCrystal         func(pos mgl64.Vec3) Entity
 }
 
 // New creates an EntityRegistry using conf and the EntityTypes passed.
