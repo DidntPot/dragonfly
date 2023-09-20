@@ -52,8 +52,10 @@ func (e EndCrystal) UseOnBlock(pos cube.Pos, face cube.Face, _ mgl64.Vec3, w *wo
 		return false
 	}
 
-	place(w, pos, e, user, ctx)
-	return placed(ctx)
+	ent := w.EntityRegistry().Config().EndCrystal
+	w.AddEntity(ent(pos.Vec3()))
+
+	return true
 }
 
 type endCrystalModel struct{}
