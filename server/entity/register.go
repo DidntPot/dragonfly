@@ -28,6 +28,7 @@ var DefaultRegistry = conf.New([]world.EntityType{
 	SplashPotionType{},
 	TNTType{},
 	TextType{},
+	EndCrystal{},
 })
 
 var conf = world.EntityRegistryConfig{
@@ -89,5 +90,8 @@ var conf = world.EntityRegistryConfig{
 	},
 	Lightning: func(pos mgl64.Vec3) world.Entity {
 		return NewLightning(pos)
+	},
+	EndCrystal: func(pos mgl64.Vec3) world.Entity {
+		return NewEndCrystal(pos)
 	},
 }

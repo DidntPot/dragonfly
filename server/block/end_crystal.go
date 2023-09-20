@@ -4,7 +4,6 @@ import (
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/world"
-	"github.com/df-mc/dragonfly/server/world/sound"
 	"github.com/go-gl/mathgl/mgl64"
 	"hash/fnv"
 )
@@ -56,7 +55,6 @@ func (e EndCrystal) UseOnBlock(pos cube.Pos, face cube.Face, _ mgl64.Vec3, w *wo
 	ent := w.EntityRegistry().Config().EndCrystal
 
 	w.AddEntity(ent(pos.Vec3()))
-	w.PlaySound(pos.Vec3(), sound.Explosion{})
 
 	return true
 }
