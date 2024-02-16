@@ -492,6 +492,11 @@ func (s *Session) writePacket(pk packet.Packet) {
 	_ = s.conn.WritePacket(pk)
 }
 
+// WritePacket ...
+func (s *Session) WritePacket(pk packet.Packet) {
+	s.writePacket(pk)
+}
+
 // initPlayerList initialises the player list of the session and sends the session itself to all other
 // sessions currently open.
 func (s *Session) initPlayerList() {
