@@ -2886,6 +2886,11 @@ func (p *Player) session() *session.Session {
 	return session.Nop
 }
 
+// Session ...
+func (p *Player) Session() *session.Session {
+	return p.session()
+}
+
 // useContext returns an item.UseContext initialised for a Player.
 func (p *Player) useContext() *item.UseContext {
 	call := func(ctx *event.Context, slot int, it item.Stack, f func(ctx *event.Context, slot int, it item.Stack)) error {
